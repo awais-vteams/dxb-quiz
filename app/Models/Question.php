@@ -13,6 +13,8 @@ class Question extends Model
 {
     use HasFactory;
 
+    protected $hidden = ['created_at', 'updated_at'];
+
     public function answers(): HasMany
     {
         return $this->hasMany(Answer::class);

@@ -42,7 +42,7 @@
                         return;
                     }
 
-                    $('#question-text').text(response.question.title);
+                    $('#question-text').html(`<strong>Question (${response.index}/${response.total}):</strong> ` + response.question.title);
                     let optionsHtml = '';
 
                     $.each(response.question.answers, function (index, option) {
@@ -65,7 +65,7 @@
                 return;
             }
 
-            let questionId = $('#quiz-container').data('question-id');
+            const questionId = $('#quiz-container').data('question-id');
 
             $.ajax({
                 type: "POST",
@@ -82,11 +82,15 @@
         }
 
         function skipQuestion() {
+            const questionId = $('#quiz-container').data('question-id');
+
             $.ajax({
                 type: "POST",
                 url: '{{ route('quiz.skip') }}',
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                data: {},
+                data: {
+                    question_id: questionId,
+                },
                 success: function (msg) {
                     fetchQuestion();
                 }

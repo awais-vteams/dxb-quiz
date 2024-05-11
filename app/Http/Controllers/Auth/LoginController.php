@@ -3,18 +3,18 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
-class AuthenticatedSessionController extends Controller
+class LoginController extends Controller
 {
     /**
      * Display the login view.
      */
-    public function create(): View
+    public function index(): View
     {
         return view('auth.login');
     }
@@ -22,13 +22,19 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
-        $request->authenticate();
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+        ]);
 
-        $request->session()->regenerate();
+        $user = User::create([
+            'name' => $request->name,
+        ]);
 
-        return redirect()->intended(route('quiz.start', absolute: false));
+        Auth::login($user);
+
+        return redirect(route('quiz.start', absolute: false));
     }
 
     /**

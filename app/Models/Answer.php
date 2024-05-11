@@ -12,7 +12,7 @@ class Answer extends Model
 {
     use HasFactory;
 
-    protected $hidden = ['is_correct'];
+    protected $hidden = ['is_correct', 'question_id', 'created_at', 'updated_at'];
 
     protected function casts(): array
     {
