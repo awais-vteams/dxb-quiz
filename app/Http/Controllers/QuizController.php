@@ -31,14 +31,22 @@ class QuizController extends Controller
 
     public function submit(QuizRequest $request, Quiz $quiz): Response
     {
-        $quiz->saveAnswer($request->user(), $request->validated());
+        $quiz->saveAnswer(
+            user: $request->user(),
+            questionId: $request->validated('question_id'),
+            answerId: $request->validated('answer_id')
+        );
 
         return response()->noContent();
     }
 
     public function skipQuestion(Request $request, Quiz $quiz): Response
     {
-        $quiz->skipAnswer($request->user(), $request->post('question_id'));
+        $quiz->saveAnswer(
+            user: $request->user(),
+            questionId: $request->post('question_id'),
+            isSkip: true
+        );
 
         return response()->noContent();
     }

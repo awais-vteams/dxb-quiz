@@ -38,22 +38,18 @@ class Quiz
         return Question::count();
     }
 
-    public function saveAnswer(User $user, array $validated): void
+    public function saveAnswer(User $user, int $questionId, int $answerId = null, $isSkip = false): void
     {
         $result = $user->myResult();
 
-        $isCorrect = $this->answer->isCorrect($validated['question_id'], $validated['answer_id']);
+        if ($isSkip) {
+            $result->increment('skip_answers');
+        }
 
-        $result->increment($isCorrect ? 'correct_answers' : 'wrong_answers');
-
-        $this->saveInSession($validated['question_id']);
-    }
-
-    public function skipAnswer(User $user, int $questionId): void
-    {
-        $result = $user->myResult();
-
-        $result->increment('skip_answers');
+        if ($answerId) {
+            $isCorrect = $this->answer->isCorrect($questionId, $answerId);
+            $result->increment($isCorrect ? 'correct_answers' : 'wrong_answers');
+        }
 
         $this->saveInSession($questionId);
     }
